@@ -8,7 +8,7 @@ __version__ = '0.1'
 from flask import Flask
 from webassets.loaders import PythonLoader as PythonAssetsLoader
 
-from rpivideo.controllers.main import main
+from rpivideo.views.main import main
 from rpivideo import assets
 from rpivideo.models import db
 
