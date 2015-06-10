@@ -1,0 +1,55 @@
+{%extends "base.html"%}
+
+{%block title%}RPI-Video{% endblock %}
+
+{%block body%}
+    <div class="jumbotron">
+        <h1>RPI-Video</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>Raspberry Pi Video Player</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <form role="form" action="{{ url_for('.video') }}" method="post">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    {{ form.url.label }}
+                    {% if form.url.errors %}
+                        {% for e in form.url.errors %}
+                            <p class="help-block">{{ e }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    {{ form.url(class_="form-control") }}
+                 
+                </div>
+                <div class="form-group">
+                    {{ form.vid_output.label }}
+                    {% if form.vid_output.errors %}
+                        {% for e in form.vid_output.errors %}
+                            <p class="help-block">{{ e }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    {{ form.vid_output(class_="form-control") }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            </div>
+        <div class="col-md-4">
+            <h3>Tests</h3>
+            <p>Example tests, built with py.test, are included in to demonstrate how to test a flask app.</p>
+        </div>
+
+        <div class="col-md-4">
+            <h3>Common Libraries</h3>
+            <p>The CSS Library Bootstrap is included, along with the Javascript libraries modernizr and jQuery.</p>
+        </div>
+    </div>
+{%endblock%}
