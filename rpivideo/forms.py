@@ -51,7 +51,7 @@ class RegistrationForm(Form):
 
 
 class VideoForm(Form):
-    url = TextField(u'Url', validators=[validators.required()])
+    url = TextField(u'Url', validators=[validators.URL()])
     vid_output = SelectField(u'Video Output', choices=[('hdmi', 'HDMI'), ('vga', 'VGA')]) 
     
     def validate(self):
@@ -59,11 +59,6 @@ class VideoForm(Form):
 
         # if our validators do not pass
         if not check_validate:
-            return False
-
-        video = Video.query.filter_by(url=self.url.data).first()
-        if video:
-            self.url.errors.append('Video already exists')
             return False
 
         return True

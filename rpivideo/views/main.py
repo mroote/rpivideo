@@ -4,8 +4,10 @@ from flask.ext.login import login_user, logout_user, login_required
 from rpivideo.extensions import cache
 from rpivideo.forms import LoginForm, VideoForm, RegistrationForm
 from rpivideo.models import User, db
-main = Blueprint('main', __name__)
+from rpivideo.video import Player
 
+main = Blueprint('main', __name__)
+player = None
 
 @main.route('/')
 @cache.cached(timeout=1000)
@@ -60,14 +62,41 @@ def logout():
 @main.route("/video", methods=["GET", "POST"])
 @login_required
 def video():
+    global player
     form = VideoForm()
     
     if form.validate_on_submit():
-        flash("POSTED: {0}, {1}".format(form.url.data, form.vid_output.data))
-        return redirect('/')
+        url = form.url.data
+        vid_output = form.vid_output.data
+        player = Player(url=url, output=vid_output)
+        player.print_player() 
+        return redirect('/video')
 
     return render_template("video.html", form=form)
 
+@main.route("/video/play", methods=["GET", "POST"])
+@login_required
+def video_playpause():
+    global player
+    form = VideoForm()
+
+    if not player:
+        return
+    player.toggle_pause()
+    return render_template("video.html", form=form)
+
+@main.route("/video/stop", methods=["GET", "POST"])
+@login_required
+def video_stop():
+    global player
+    form = VideoForm()
+
+    if not player:
+        return
+    
+    print(player)
+    player.stop()
+    return render_template("video.html", form=form)
 
 @main.route("/restricted")
 @login_required

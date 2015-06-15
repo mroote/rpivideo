@@ -25,3 +25,4 @@ lint:
 
 test:
 	py.test tests
+

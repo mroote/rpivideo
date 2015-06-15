@@ -47,7 +47,7 @@ class Video(db.Model):
     url = db.Column(db.String())
     title = db.Column(db.String())
     vid_format = db.Column(db.String())
-    format_id = db.Column(db.Integer()
+    format_id = db.Column(db.Integer())
     upload_date = db.Column(db.String())
     height = db.Column(db.Integer())
     width = db.Column(db.Integer())

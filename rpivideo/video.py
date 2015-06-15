@@ -1,22 +1,24 @@
 import youtube_dl
-import pyomxplayer
+import rpivideo.pyomxplayer as pyomx
 import time
 
 
 class Player():
-    def __init__(self, url):
-        self.vid = get_url_video_format(url, 'best')
-        print(self.vid)
+    def __init__(self, url='', output=''):
+        if url:
+            self.vid = get_url_video_format(url, 'best')
 
-        self.url = self.vid['url'] 
-        self.title = self.vid['title'] 
-        self.vid_format = self.vid['vid_format'] 
-        self.format_id = self.vid['format_id']    
-        self.upload_date = self.vid['upload_date']  
-        self.height = self.vid['height']  
-        self.width = self.vid['width'] 
+            self.url = self.vid['url'] 
+            self.title = self.vid['title'] 
+            self.vid_format = self.vid['vid_format'] 
+            self.format_id = self.vid['format_id']    
+            self.upload_date = self.vid['upload_date']  
+            self.height = self.vid['height']  
+            self.width = self.vid['width'] 
+            self.vid_id = self.vid['id']
 
-        self.player = pyomxplayer.OMXPlayer(self.vid['url'])
+        if url:
+            self.player = pyomx.OMXPlayer(self.vid['url'])
     
     def toggle_pause(self):
         self.player.toggle_pause()
@@ -24,7 +26,7 @@ class Player():
     def print_player(self):
         print(self.player.__dict__)
 
-    def stop_player(self):
+    def stop(self):
         self.player.stop()
 
 
@@ -63,8 +65,8 @@ def get_url_video_format(url, format):
     
     return video 
 
-player = Player('https://www.youtube.com/watch?v=XxVg_s8xAms')
-player.toggle_pause()
-player.print_player()
-time.sleep(30)
-player.stop_player()
+#player = Player('https://www.youtube.com/watch?v=XxVg_s8xAms')
+#player.toggle_pause()
+#player.print_player()
+#time.sleep(30)
+#player.stop()
