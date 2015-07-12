@@ -1,4 +1,8 @@
 """
+MIT License (MIT)
+
+Copyright (c) 2014 Johannes Baiter <johannes.baiter@gmail.com>
+
 Adapted from https://github.com/Bounder/pyomxplayer
 """
 
