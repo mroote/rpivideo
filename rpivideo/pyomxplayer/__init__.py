@@ -16,7 +16,7 @@ class OMXPlayer(object):
     _DONE_REGEX = re.compile(b'have a nice day.*')
     _DURATION_REGEX = re.compile(b'Duration: (.+?):(.+?):(.+?),')
 
-    _LAUNCH_CMD      = 'omxplayer -s -r -o hdmi %s %s'
+    _LAUNCH_CMD      = 'omxplayer -s %s %s'
     _INFO_CMD    = 'omxplayer -i %s'
     _PAUSE_CMD       = 'p'
     _TOGGLE_SUB_CMD  = 's'
@@ -81,7 +81,7 @@ class OMXPlayer(object):
         else:
             return 0
 
-    def _get_position(self):
+    def get_position(self):
         while True:
             index = self._process.expect([self._STATUS_REGEX,
                                           pexpect.TIMEOUT,

@@ -52,7 +52,7 @@ class RegistrationForm(Form):
 
 class VideoForm(Form):
     url = TextField(u'Url', validators=[validators.URL()])
-    vid_output = SelectField(u'Video Output', choices=[('hdmi', 'HDMI'), ('vga', 'VGA')]) 
+    vid_output = SelectField(u'Video Output', choices=[('hdmi', 'HDMI'), ('local', 'Local'), ('both', 'Both')]) 
     
     def validate(self):
         check_validate = super(VideoForm, self).validate()

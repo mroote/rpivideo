@@ -1,6 +1,9 @@
 #rpivideo
 
-A tool for streaming videos on the Raspberry Pi.  Uses youtube-dl to support many sources of video.  
+A tool for streaming videos on the Raspberry Pi.  This lightweight video player 
+can stream videos from youtube and other sources without running a full X server.
+
+Uses youtube-dl to support many sources of video.  
 Provides a webinterface for easy control of the video player.
 
 Installation:

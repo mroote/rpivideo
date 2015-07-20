@@ -52,3 +52,4 @@ class Video(db.Model):
     height = db.Column(db.Integer())
     width = db.Column(db.Integer())
     vid_id = db.Column(db.String())
+    play_count = db.Column(db.Integer())
