@@ -66,7 +66,7 @@ class OMXPlayer(object):
         self._info_process = self._spawn(info_cmd)
 
     def _monitor_play_position(self):
-        self._position_thread = Thread(target=self._get_position)
+        self._position_thread = Thread(target=self.get_position)
         self._position_thread.start()
 
     def _get_duration(self):

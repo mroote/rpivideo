@@ -33,7 +33,7 @@ class Player():
         self.player.toggle_pause()
     
     def print_player(self):
-        self.player.__dict__.keys()
+        print(self.player.__dict__)
 
     def stop(self):
         self.player.stop()

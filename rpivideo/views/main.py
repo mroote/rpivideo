@@ -101,14 +101,14 @@ def video_stop():
 def video_info():
     global player
     info = player.print_player
-    position = player.get_position()
+    #position = player.get_position()
     print(position)
     print(info)
     print(type(info))
 
     return redirect("/video")
 
-@main.route("/video/position", method=["GET", "POST"])
+@main.route("/video/position", methods=["GET", "POST"])
 def video_position():
     global player
     player_position = player.get_position()
