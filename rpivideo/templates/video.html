@@ -13,35 +13,6 @@
         </div>
     </div>
 
+    <div id="video-app"></div>
 
-        <div class="row">
-                <div class="col-md-4">
-                    <form role="form" action="{{ url_for('.video') }}" method="post">
-                        {{ form.hidden_tag() }}
-                        <div class="form-group">
-                        {{ form.url.label }}
-                        {% if form.url.errors %}
-                            {% for e in form.url.errors %}
-                                <p class="help-block">{{ e }}</p>
-                            {% endfor %}
-                        {% endif %}
-                        {{ form.url(class_="form-control") }}
-                        </div>
-                        <div class="form-group">
-                        {{ form.vid_output.label }}
-                        {% if form.vid_output.errors %}
-                            {% for e in form.vid_output.errors %}
-                                <p class="help-block">{{ e }}</p>
-                            {% endfor %}
-                        {% endif %}
-                        {{ form.vid_output(class_="form-control") }}
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
-                </div>
-                <div class="col-md-4">
-                    <div id="video-app"></div>
-                </div>
-
-        </div>
 {%endblock%}

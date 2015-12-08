@@ -9,10 +9,22 @@ from rpivideo.video import Player
 main = Blueprint('main', __name__)
 
 
-@main.route('/')
+@main.route('/', methods=["GET", "POST"])
 @cache.cached(timeout=1000)
 def home():
-    return render_template('index.html')
+    global player
+
+    if request.method == 'POST':
+        url = request.form['url']
+        output = request.form['vid_output']
+        try:
+            player = Player(url=url, output=vid_output)
+            player.insert_vid_db()
+            return jsonify(success=True, message='Video added to play queue')
+        except Exception as e:
+            return jsonify(error=e)
+
+    return render_template("video.html")
 
 
 @main.route("/login", methods=["GET", "POST"])
@@ -56,21 +68,6 @@ def logout():
     flash("You have been logged out.", "success")
 
     return redirect(url_for(".home"))
-
-
-@main.route("/video", methods=["GET", "POST"])
-def video():
-    global player
-    form = VideoForm()
-
-    if form.validate_on_submit():
-        url = form.url.data
-        vid_output = form.vid_output.data
-        player = Player(url=url, output=vid_output)
-        player.insert_vid_db()
-        return redirect('/video')
-
-    return render_template("video.html", form=form)
 
 
 @main.route("/video/play", methods=["GET", "POST"])
