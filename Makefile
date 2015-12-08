@@ -10,7 +10,7 @@ help:
 env:
 	sudo easy_install pip && \
 	pip install virtualenv && \
-	virtualenv -p /usr/local/bin/python3 env && \
+	virtualenv -p /usr/bin/python3 env && \
 	. env/bin/activate && \
 	make deps
 

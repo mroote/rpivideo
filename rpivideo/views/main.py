@@ -8,6 +8,7 @@ from rpivideo.video import Player
 
 main = Blueprint('main', __name__)
 
+
 @main.route('/')
 @cache.cached(timeout=1000)
 def home():
@@ -18,20 +19,19 @@ def home():
 def login():
     form = LoginForm()
 
-    
     if form.validate_on_submit():
         if form.remember.data:
             remember = form.remember.data
             print(remember)
         user = User.query.filter_by(username=form.username.data).one()
         login_user(user)
-        
+
         flash("Logged in successfully.", "success")
-        
+
         session['username'] = user.username
 
         return redirect(request.args.get("next") or url_for(".home"))
-    
+
     return render_template("login.html", form=form)
 
 
@@ -62,7 +62,7 @@ def logout():
 def video():
     global player
     form = VideoForm()
-    
+
     if form.validate_on_submit():
         url = form.url.data
         vid_output = form.vid_output.data
@@ -71,6 +71,7 @@ def video():
         return redirect('/video')
 
     return render_template("video.html", form=form)
+
 
 @main.route("/video/play", methods=["GET", "POST"])
 def video_playpause():
@@ -82,11 +83,12 @@ def video_playpause():
     player.toggle_pause()
     return render_template("video.html", form=form)
 
+
 @main.route("/video/stop", methods=["GET", "POST"])
 def video_stop():
     global player
     form = VideoForm()
-    
+
     try:
         if not player:
             return
@@ -96,6 +98,7 @@ def video_stop():
     player.stop()
 
     return render_template("video.html", form=form)
+
 
 @main.route("/video/info", methods=["GET", "POST"])
 def video_info():
@@ -108,13 +111,14 @@ def video_info():
 
     return redirect("/video")
 
+
 @main.route("/video/position", methods=["GET", "POST"])
 def video_position():
     global player
     player_position = player.get_position()
-    
+
     return jsonify(position=player_position)
-    
+
 
 @main.route("/restricted")
 @login_required

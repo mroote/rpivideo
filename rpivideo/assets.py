@@ -11,9 +11,17 @@ common_css = Bundle(
 common_js = Bundle(
     'js/vendor/jquery.min.js',
     'js/vendor/bootstrap.min.js',
+    'js/vendor/react.js',
+    'js/vendor/react-dom.js',
     Bundle(
         'js/main.js',
         filters='jsmin'
     ),
     output='public/js/common.js'
+)
+
+app_js = Bundle(
+    'js/vendor/app.js',
+    filters='jsmin',
+    output='public/js/app.js'
 )
