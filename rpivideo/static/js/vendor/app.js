@@ -1,16 +1,33 @@
 var VideoForm = React.createClass({
+    getInitialState: function() {
+        return {url: '', output: 'hdmi'};
+    },
+    handleUrlChange: function(e) {
+        this.setState({url: e.target.value});
+    },
+    handleOutputChange: function(e) {
+        console.log(e)
+        this.setState({output: e.target.value});
+    },
+    handleSubmit: function(e) {
+        e.preventDefault();
+        var url = this.state.url.trim();
+        var output = this.state.output.trim();
+        console.log(url);
+        console.log(output);
+    },
     render: function() {
         return (
-            <form>
+            <form method="POST" onSubmit={this.handleSubmit}>
               <div className="form-group">
-                <label for="url">Video URL:</label>
-                <input type="text" className="form-control" id="urlinput" placeholder="URL" name="url" />
+                <label htmlFor="url">Video URL:</label>
+                <input type="text" className="form-control" id="urlinput" placeholder="URL" name="url" value={this.state.url} onChange={this.handleUrlChange}/>
               </div>
               <div className="form-group">
-                <select className="form-control" name="output">
-                  <option>HDMI</option>
-                  <option>Local</option>
-                  <option>Both</option>
+                <select className="form-control" ref="menu" name="output" value={this.state.output} onChange={this.handleOutputChange}>
+                  <option value="hdmi">HDMI</option>
+                  <option value="local">Local</option>
+                  <option value="both">Both</option>
                 </select>
               </div>
               <button type="submit" className="btn btn-default">Submit</button>
@@ -18,6 +35,23 @@ var VideoForm = React.createClass({
         );
     }
 });
+
+var VideoControls = React.createClass({
+    render: function() {
+        return (
+            <div className="form-group">
+                <div className="btn-group" role="group" aria-label="...">
+                    <button type="button" className="btn btn-default">
+                    <span className="glyphicon glyphicon-play"></span>
+                    </button>
+                    <a href="/video/stop"><button type="button" className="btn btn-default">
+                    <span className="glyphicon glyphicon-stop"></span>
+                    </button></a>
+                </div>
+            </div>
+        );
+    }
+})
 
 var VideoApp = React.createClass({
     render: function() {
@@ -27,14 +61,7 @@ var VideoApp = React.createClass({
                     <VideoForm />
                 </div>
                 <div className="col-md-4">
-                    <div className="btn-group" role="group" aria-label="...">
-                        <a href="/video/play"><button type="button" className="btn btn-default">
-                        <span className="glyphicon glyphicon-play"></span>
-                        </button></a>
-                        <a href="/video/stop"><button type="button" className="btn btn-default">
-                        <span className="glyphicon glyphicon-stop"></span>
-                        </button></a>
-                    </div>
+                    <VideoControls />
                 </div>
             </div>
         );

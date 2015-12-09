@@ -15,8 +15,14 @@ def home():
     global player
 
     if request.method == 'POST':
-        url = request.form['url']
-        output = request.form['vid_output']
+        try:
+            url = request.form['url']
+        except Exception as e:
+            return jsonify(Success=False, message="Please provide video URL: {}".format(e))
+        try:
+            output = request.form['vid_output']
+        except Exception as e:
+            return jsonify(Success=False, message="Please provide video output format: {}".format(e))
         try:
             player = Player(url=url, output=vid_output)
             player.insert_vid_db()
@@ -95,6 +101,62 @@ def video_stop():
     player.stop()
 
     return render_template("video.html", form=form)
+
+
+@main.route("/video/ff", methods=["GET"])
+def video_ff():
+    global player
+
+    try:
+        player
+    except NameError:
+        return jsonify(succes=False, message="No Video found")
+
+    player.forward()
+
+    return jsonify(success=True)
+
+
+@main.route("/video/rw", methods=["GET"])
+def video_rw():
+    global player
+
+    try:
+        player
+    except NameError:
+        return jsonify(succes=False, message="No Video found")
+
+    player.backward()
+
+    return jsonify(success=True)
+
+
+@main.route("/video/ff30", methods=["GET"])
+def video_ff30():
+    global player
+
+    try:
+        player
+    except NameError:
+        return jsonify(succes=False, message="No Video found")
+
+    player.jump_30()
+
+    return jsonify(success=True)
+
+
+@main.route("/video/rw30", methods=["GET"])
+def video_rw30():
+    global player
+
+    try:
+        player
+    except NameError:
+        return jsonify(succes=False, message="No Video found")
+
+    player.back_30()
+
+    return jsonify(success=True)
 
 
 @main.route("/video/info", methods=["GET", "POST"])
