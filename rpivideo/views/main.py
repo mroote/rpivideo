@@ -2,11 +2,12 @@ from flask import Blueprint, render_template, flash, request, redirect, url_for,
 from flask.ext.login import login_user, logout_user, login_required
 
 from rpivideo.extensions import cache
-from rpivideo.forms import LoginForm, VideoForm, RegistrationForm
+from rpivideo.forms import LoginForm, RegistrationForm
 from rpivideo.models import User, db
 from rpivideo.video import Player
 
 main = Blueprint('main', __name__)
+
 
 @main.route('/', methods=["GET", "POST"])
 @cache.cached(timeout=1000)
@@ -98,7 +99,7 @@ def video_stop():
 
     player.stop()
 
-    return render_template("video.html")
+    return jsonify(success=True, message="Video has been stopped")
 
 
 @main.route("/video/ff", methods=["GET"])
@@ -176,8 +177,10 @@ def video_position():
     global player
 
     position = player.get_position()
+    duration = player.get_duration()
 
-    return jsonify(position=position)
+    return jsonify(position=position,
+                   duration=duration)
 
 
 @main.route("/restricted")

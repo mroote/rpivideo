@@ -13,12 +13,12 @@ var VideoForm = React.createClass({
         e.preventDefault();
         var urlSubmit = this.state.url.trim();
         var outputSubmit = this.state.output.trim();
-        
         var dataSubmitted = {url: urlSubmit, output: outputSubmit}
 
-        if (!urlSubmit || ! outputSubmit) {
+        if (!urlSubmit || !outputSubmit) {
             return;
         }
+
         $.ajax({
             url: '/',
             type: 'POST',
@@ -30,6 +30,7 @@ var VideoForm = React.createClass({
                 console.error(xhr, status, err.toString());
             }.bind(this)
         });
+
         this.setState({url: '', output: 'hdmi'})
     },
     render: function() {
@@ -52,21 +53,33 @@ var VideoForm = React.createClass({
     }
 });
 
+
 var VideoControls = React.createClass({
     getInitialState: function() {
         return {progress: 0 + '%',
                 position: 0.0,
-                playing: false}
+                playing: false,
+                duration: this.setDuration()}
     },
-    getProgress: function() {
-        var position = 0.0;
-
+    getProgress: function(e) {
         $.ajax({
             url: '/video/position',
             dataType: 'json',
             success: function(data) {
                 this.setState({position: data.position})
-            }
+            }.bind(this)
+        });
+    },
+    componentDidMount: function() {
+        var progress = setInterval(this.getProgress(), 1500);
+    },
+    setDuration: function(e) {
+        $.ajax({
+            url: '/video/position',
+            dataType: 'json',
+            success: function(data) {
+                this.setState({duration: data.duration / 1000000})
+            }.bind(this)
         });
     },
     playButton: function(e) {
@@ -77,7 +90,7 @@ var VideoControls = React.createClass({
                 this.setState({playing: true});
                 console.log(data);
             }.bind(this)
-        })
+        });
     },
     stopButton: function(e) {
         e.preventDefault();
@@ -94,7 +107,6 @@ var VideoControls = React.createClass({
         $.ajax({
             url: '/video/rw30',
             success: function(data) {
-                this.setState({playing: false});
                 console.log(data);
             }.bind(this)
         })
@@ -104,7 +116,6 @@ var VideoControls = React.createClass({
         $.ajax({
             url: '/video/ff30',
             success: function(data) {
-                this.setState({playing: false});
                 console.log(data);
             }.bind(this)
         })
@@ -114,7 +125,6 @@ var VideoControls = React.createClass({
         $.ajax({
             url: '/video/rw',
             success: function(data) {
-                this.setState({playing: false});
                 console.log(data);
             }.bind(this)
         })
@@ -124,20 +134,24 @@ var VideoControls = React.createClass({
         $.ajax({
             url: '/video/ff',
             success: function(data) {
-                this.setState({playing: false});
                 console.log(data);
             }.bind(this)
         })
     },
     render: function() {
-        var progressbarSize = 200
+        
+
+        var percentComplete = this.state.position / this.state.duration * 100
+
         return (
             <div>
                 <p>{this.state.position}</p>
+                <p>{this.state.duration}</p>
                 <div className="form-group">
                     <div className="btn-group" role="group" aria-label="...">
                         <button type="button" className="btn btn-default" onClick={this.playButton}>
                             <span className="glyphicon glyphicon-play"></span>
+                            <span className="glyphicon glyphicon-pause"></span>
                         </button>
                         <button type="button" className="btn btn-default" onClick={this.stopButton}>
                             <span className="glyphicon glyphicon-stop"></span>
@@ -155,10 +169,14 @@ var VideoControls = React.createClass({
                             <span className="glyphicon glyphicon-step-forward"></span>
                         </button>
                     </div>
-
                 </div>
                 <div className="progress">
-                  <div className="progress-bar" role="progressbar"  style={{width: this.state.progress}}>
+                  <div className="progress-bar" 
+                       role="progressbar" 
+                       aria-valuenow={this.state.position} 
+                       aria-valuemin="0" 
+                       aria-valuemax={this.state.duration} 
+                       style={{width: percentComplete + '%'}}>
                   </div>
                 </div>
             </div>

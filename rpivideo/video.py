@@ -4,7 +4,6 @@ from rpivideo.models import Video, db
 
 
 class Player():
-
     def __init__(self, url='', output=''):
         if url:
             self.vid = get_url_video_format(url, 'best')
@@ -28,6 +27,9 @@ class Player():
 
     def get_position(self):
         return self.player.position
+
+    def get_duration(self):
+        return self.player.duration
 
     def toggle_subtitles(self):
         self.player.toggle_subtitles()
