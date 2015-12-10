@@ -15,7 +15,6 @@ from rpivideo.models import db
 from rpivideo.extensions import (
     cache,
     assets_env,
-    debug_toolbar,
     login_manager
 )
 
@@ -39,9 +38,6 @@ def create_app(object_name, env="prod"):
 
     # initialize the cache
     cache.init_app(app)
-
-    # initialize the debug tool bar
-    debug_toolbar.init_app(app)
 
     # initialize SQLAlchemy
     db.init_app(app)

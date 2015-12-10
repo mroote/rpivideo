@@ -8,6 +8,7 @@ class Player():
     def __init__(self, url='', output=''):
         if url:
             self.vid = get_url_video_format(url, 'best')
+            print(self.vid)
             self.url = self.vid['url']
             self.title = self.vid['title']
             self.vid_format = self.vid['vid_format']
@@ -16,6 +17,7 @@ class Player():
             self.height = self.vid['height']
             self.width = self.vid['width']
             self.vid_id = self.vid['id']
+            self.duration = self.vid['duration']
         if output:
             args = '-r -o {0}'.format(output)
         else:
@@ -25,7 +27,7 @@ class Player():
             self.player = pyomx.OMXPlayer(self.vid['url'], args=args)
 
     def get_position(self):
-        self.player.get_position()
+        return self.player.position
 
     def toggle_subtitles(self):
         self.player.toggle_subtitles()
@@ -52,9 +54,9 @@ class Player():
         self.player.back_30()
 
     def insert_vid_db(self):
-        video = db.session.query(Video).filter_by(vid_id=self.vid_id).first()
-        if video:
-            video.play_count += 1
+        Video = db.session.query(Video).filter_by(vid_id=self.vid_id).first()
+        if Video:
+            Video.play_count += 1
             db.session.commit()
         else:
             video = Video(url=self.url,
@@ -75,6 +77,8 @@ def extract_info(url, options):
     with ydl:
         result = ydl.extract_info(url, download=False)
 
+    print(result)
+    print(dir(result))
     return result
 
 
@@ -108,6 +112,7 @@ def get_url_video_format(url, format):
              'title': result['title'],
              'vid_format': result['format'],
              'format_id': result['format_id'],
+             'duration': result['duration'],
              'upload_date': upload_date,
              'height': height,
              'width': width,

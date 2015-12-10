@@ -16,33 +16,29 @@ from .parser import OMXPlayerParser
 
 
 class OMXPlayer(object):
-    _STATUS_REGEX = re.compile(b'V :\s*([\d.]+).*')
+    _STATUS_REGEX = re.compile(b'M:\s*([\d.]+).*')
     _DONE_REGEX = re.compile(b'have a nice day.*')
     _DURATION_REGEX = re.compile(b'Duration: (.+?):(.+?):(.+?),')
 
-    _LAUNCH_CMD      = 'omxplayer -s %s %s'
-    _INFO_CMD    = 'omxplayer -i %s'
-    _PAUSE_CMD       = 'p'
-    _TOGGLE_SUB_CMD  = 's'
-    _INC_SPEED_CMD   = '1'
-    _DEC_SPEED_CMD   = '2'
-    _PREV_AUDIO_CMD  = 'j'
-    _NEXT_AUDIO_CMD  = 'k'
-    _PREV_SUB_CMD    = 'n'
-    _NEXT_SUB_CMD    = 'm'
-    _QUIT_CMD        = 'q'
-    _PREVIOUS_CMD    = 'i'
-    _NEXT_CMD        = 'o'
+    _LAUNCH_CMD = 'omxplayer -s %s %s'
+    _INFO_CMD = 'omxplayer -i %s'
+    _PAUSE_CMD = 'p'
+    _TOGGLE_SUB_CMD = 's'
+    _INC_SPEED_CMD = '1'
+    _DEC_SPEED_CMD = '2'
+    _PREV_AUDIO_CMD = 'j'
+    _NEXT_AUDIO_CMD = 'k'
+    _PREV_SUB_CMD = 'n'
+    _NEXT_SUB_CMD = 'm'
+    _QUIT_CMD = 'q'
+    _PREVIOUS_CMD = 'i'
+    _NEXT_CMD = 'o'
     _DECREASE_VOLUME = '-'
     _INCREASE_VOLUME = '+'
-    _BACK_30_CMD     = '\x1b[D' #left
-    _BACK_600_CMD    = '\x1b[B' #down
-    _FORWARD_30_CMD  = '\x1b[C' #right
-    _FORWARD_600_CMD = '\x1b[A' #up
-
-
-
-
+    _BACK_30_CMD = '\x1b[D'  # left
+    _BACK_600_CMD = '\x1b[B'  # down
+    _FORWARD_30_CMD = '\x1b[C'  # right
+    _FORWARD_600_CMD = '\x1b[A'  # up
 
     def __init__(self, media_file, args=None, start_playback=False,
                  _parser=OMXPlayerParser, _spawn=pexpect.spawn, stop_callback=None):
@@ -54,6 +50,7 @@ class OMXPlayer(object):
         self._info_process.terminate()
         self._monitor_play_position()
         self._stop_callback = stop_callback
+        self.position = 0.0
 
         # By default the process starts playing
         self.paused = False
@@ -70,7 +67,7 @@ class OMXPlayer(object):
         self._info_process = self._spawn(info_cmd)
 
     def _monitor_play_position(self):
-        self._position_thread = Thread(target=self.get_position)
+        self._position_thread = Thread(target=self._get_position)
         self._position_thread.start()
 
     def _get_duration(self):
@@ -81,16 +78,17 @@ class OMXPlayer(object):
             hours = int(re.sub(b'\x1b.*?m', '', duration_info[0]))
             minutes = int(re.sub(b'\x1b.*?m', '', duration_info[1]))
             seconds = float(re.sub(b'\x1b.*?m', '', duration_info[2]))
-            return int(hours*60*60*1000000 + minutes*60*1000000 + seconds*1000000)
+            return int(hours * 60 * 60 * 1000000 + minutes * 60 * 1000000 + seconds * 1000000)
         else:
             return 0
 
-    def get_position(self):
+    def _get_position(self):
         while True:
             index = self._process.expect([self._STATUS_REGEX,
                                           pexpect.TIMEOUT,
                                           pexpect.EOF,
                                           self._DONE_REGEX])
+
             def timed_out():
                 return index == 1
 
@@ -105,7 +103,7 @@ class OMXPlayer(object):
                 break
             else:
                 # Process is still running (happy path)
-                self.position = float(self._process.match.group(1))
+                self.position = float(self._process.match.group(1)) / 1000000
             sleep(0.05)
 
     def is_running(self):

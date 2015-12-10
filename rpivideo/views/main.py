@@ -8,7 +8,6 @@ from rpivideo.video import Player
 
 main = Blueprint('main', __name__)
 
-
 @main.route('/', methods=["GET", "POST"])
 @cache.cached(timeout=1000)
 def home():
@@ -20,12 +19,12 @@ def home():
         except Exception as e:
             return jsonify(Success=False, message="Please provide video URL: {}".format(e))
         try:
-            output = request.form['vid_output']
+            output = request.form['output']
         except Exception as e:
             return jsonify(Success=False, message="Please provide video output format: {}".format(e))
         try:
-            player = Player(url=url, output=vid_output)
-            player.insert_vid_db()
+            player = Player(url=url, output=output)
+            #player.insert_vid_db()
             return jsonify(success=True, message='Video added to play queue')
         except Exception as e:
             return jsonify(error=e)
@@ -79,18 +78,17 @@ def logout():
 @main.route("/video/play", methods=["GET", "POST"])
 def video_playpause():
     global player
-    form = VideoForm()
 
     if not player:
         return
+
     player.toggle_pause()
-    return render_template("video.html", form=form)
+    return jsonify(success=True)
 
 
 @main.route("/video/stop", methods=["GET", "POST"])
 def video_stop():
     global player
-    form = VideoForm()
 
     try:
         if not player:
@@ -100,7 +98,7 @@ def video_stop():
 
     player.stop()
 
-    return render_template("video.html", form=form)
+    return render_template("video.html")
 
 
 @main.route("/video/ff", methods=["GET"])
@@ -162,21 +160,24 @@ def video_rw30():
 @main.route("/video/info", methods=["GET", "POST"])
 def video_info():
     global player
+    print(player)
     info = player.print_player
-    #position = player.get_position()
+    print(info)
+
     print(position)
     print(info)
     print(type(info))
 
-    return redirect("/video")
+    return jsonify(info)
 
 
-@main.route("/video/position", methods=["GET", "POST"])
+@main.route("/video/position", methods=["GET"])
 def video_position():
     global player
-    player_position = player.get_position()
 
-    return jsonify(position=player_position)
+    position = player.get_position()
+
+    return jsonify(position=position)
 
 
 @main.route("/restricted")
