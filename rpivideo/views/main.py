@@ -183,9 +183,11 @@ def video_position():
 
     position = player.get_position()
     duration = player.get_duration()
+    playing = player.check_running()
 
     return jsonify(position=position,
-                   duration=duration)
+                   duration=duration,
+                   playing=playing)
 
 
 @main.route("/restricted")

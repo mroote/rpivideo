@@ -6,7 +6,6 @@ var VideoForm = React.createClass({
         this.setState({url: e.target.value});
     },
     handleOutputChange: function(e) {
-        console.log(e)
         this.setState({output: e.target.value});
     },
     handleSubmit: function(e) {
@@ -66,7 +65,10 @@ var VideoControls = React.createClass({
             url: '/video/position',
             dataType: 'json',
             success: function(data) {
-                this.setState({position: data.position})
+                this.setState({position: data.position, playing: data.playing})
+                if (data.playing === false) {
+                    clearInterval(this.progressTimer)
+                }
             }.bind(this)
         });
     },
@@ -144,14 +146,10 @@ var VideoControls = React.createClass({
         })
     },
     render: function() {
-
-
         var percentComplete = this.state.position / this.state.duration * 100
 
         return (
             <div>
-                <p>{this.state.position}</p>
-                <p>{this.state.duration}</p>
                 <div className="form-group">
                     <div className="btn-group" role="group" aria-label="...">
                         <button type="button" className="btn btn-default" onClick={this.playButton}>

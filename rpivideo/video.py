@@ -30,6 +30,9 @@ class Player():
     def get_duration(self):
         return self.player.duration
 
+    def check_running(self):
+        return self.player.is_running()
+
     def toggle_subtitles(self):
         self.player.toggle_subtitles()
 
