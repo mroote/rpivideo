@@ -35,20 +35,20 @@ var VideoForm = React.createClass({
     },
     render: function() {
         return (
-            <form method="POST" onSubmit={this.handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="url">Video URL:</label>
-                <input type="text" className="form-control" id="urlinput" placeholder="URL" name="url" value={this.state.url} onChange={this.handleUrlChange}/>
-              </div>
-              <div className="form-group">
-                <select className="form-control" ref="menu" name="output" value={this.state.output} onChange={this.handleOutputChange}>
-                  <option value="hdmi">HDMI</option>
-                  <option value="local">Local</option>
-                  <option value="both">Both</option>
-                </select>
-              </div>
-              <button type="submit" className="btn btn-default">Submit</button>
-            </form>
+        <form method="POST" onSubmit={this.handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="url">Video URL:</label>
+            <input type="text" className="form-control" id="urlinput" placeholder="URL" name="url" value={this.state.url} onChange={this.handleUrlChange}/>
+          </div>
+          <div className="form-group">
+            <select className="form-control" ref="menu" name="output" value={this.state.output} onChange={this.handleOutputChange}>
+              <option value="hdmi">HDMI</option>
+              <option value="local">Local</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+          <button type="submit" className="btn btn-default">Submit</button>
+        </form>
         );
     }
 });
@@ -61,7 +61,7 @@ var VideoControls = React.createClass({
                 playing: false,
                 duration: this.setDuration()}
     },
-    getProgress: function(e) {
+    getProgress: function() {
         $.ajax({
             url: '/video/position',
             dataType: 'json',
@@ -69,9 +69,6 @@ var VideoControls = React.createClass({
                 this.setState({position: data.position})
             }.bind(this)
         });
-    },
-    componentDidMount: function() {
-        var progress = setInterval(this.getProgress(), 1500);
     },
     setDuration: function(e) {
         $.ajax({
@@ -82,6 +79,9 @@ var VideoControls = React.createClass({
             }.bind(this)
         });
     },
+    componentDidMount: function() {
+
+    },
     playButton: function(e) {
         e.preventDefault();
         $.ajax({
@@ -91,6 +91,9 @@ var VideoControls = React.createClass({
                 console.log(data);
             }.bind(this)
         });
+        if (!this.progressTimer) {
+            this.progressTimer = setInterval(this.getProgress, 1500);
+        }
     },
     stopButton: function(e) {
         e.preventDefault();
@@ -100,7 +103,9 @@ var VideoControls = React.createClass({
                 this.setState({playing: false});
                 console.log(data);
             }.bind(this)
-        })
+        });
+        clearInterval(this.progressTimer);
+        this.progressTimer = false;
     },
     stepBackButton: function(e) {
         e.preventDefault();
@@ -139,7 +144,7 @@ var VideoControls = React.createClass({
         })
     },
     render: function() {
-        
+
 
         var percentComplete = this.state.position / this.state.duration * 100
 
@@ -171,11 +176,11 @@ var VideoControls = React.createClass({
                     </div>
                 </div>
                 <div className="progress">
-                  <div className="progress-bar" 
-                       role="progressbar" 
-                       aria-valuenow={this.state.position} 
-                       aria-valuemin="0" 
-                       aria-valuemax={this.state.duration} 
+                  <div className="progress-bar"
+                       role="progressbar"
+                       aria-valuenow={this.state.position}
+                       aria-valuemin="0"
+                       aria-valuemax={this.state.duration}
                        style={{width: percentComplete + '%'}}>
                   </div>
                 </div>

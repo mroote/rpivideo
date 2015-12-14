@@ -161,13 +161,13 @@ def video_rw30():
 @main.route("/video/info", methods=["GET", "POST"])
 def video_info():
     global player
-    print(player)
-    info = player.print_player
-    print(info)
 
-    print(position)
-    print(info)
-    print(type(info))
+    try:
+        player
+    except NameError:
+        return jsonify(succes=False, message="No Video found")
+
+    info = player.print_player
 
     return jsonify(info)
 
@@ -175,6 +175,11 @@ def video_info():
 @main.route("/video/position", methods=["GET"])
 def video_position():
     global player
+
+    try:
+        player
+    except NameError:
+        return jsonify(succes=False, message="No Video found")
 
     position = player.get_position()
     duration = player.get_duration()

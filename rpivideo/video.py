@@ -7,7 +7,6 @@ class Player():
     def __init__(self, url='', output=''):
         if url:
             self.vid = get_url_video_format(url, 'best')
-            print(self.vid)
             self.url = self.vid['url']
             self.title = self.vid['title']
             self.vid_format = self.vid['vid_format']
@@ -56,20 +55,21 @@ class Player():
         self.player.back_30()
 
     def insert_vid_db(self):
-        Video = db.session.query(Video).filter_by(vid_id=self.vid_id).first()
-        if Video:
-            Video.play_count += 1
+        VideoModel = db.session.query(Video).filter_by(vid_id=self.vid_id).first()
+        if VideoModel:
+            VideoModel.play_count += 1
             db.session.commit()
         else:
-            video = Video(url=self.url,
-                          title=self.title,
-                          vid_format=self.vid_format,
-                          format_id=self.format_id,
-                          upload_date=self.upload_date,
-                          height=self.height,
-                          width=self.width,
-                          vid_id=self.vid_id,
-                          play_count=1)
+            video = VideoModel(url=self.url,
+                               title=self.title,
+                               vid_format=self.vid_format,
+                               format_id=self.format_id,
+                               upload_date=self.upload_date,
+                               height=self.height,
+                               width=self.width,
+                               vid_id=self.vid_id,
+                               play_count=1,
+                               duration=self.duration)
             db.session.add(video)
             db.session.commit()
 

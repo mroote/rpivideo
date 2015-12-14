@@ -52,7 +52,7 @@ class OMXPlayer(object):
         self._stop_callback = stop_callback
         self.position = 0.0
 
-        # By default the process starts playing
+        # By default the process stops playing
         self.paused = False
         if not start_playback:
             self.toggle_pause()
