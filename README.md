@@ -5,7 +5,7 @@ can stream videos from youtube and other sources.
 
 This application is build using Flask, pyomxplayer, and YouTube-DL to play many sources of video without the need of heavier software.  This player has been tested on the Raspberry Pi 1 and the Pi 2.
 
-Frontend of the applicaiton is built using React.js.
+Frontend of the application is built using React.js.
 
 ## Installation
 
