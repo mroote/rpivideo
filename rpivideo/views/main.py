@@ -80,8 +80,10 @@ def logout():
 def video_playpause():
     global player
 
-    if not player:
-        return
+    try:
+        player
+    except NameError:
+        return jsonify(succes=False, message="No video player found")
 
     player.toggle_pause()
     return jsonify(success=True)
@@ -92,10 +94,9 @@ def video_stop():
     global player
 
     try:
-        if not player:
-            return
+        player
     except NameError:
-        print("Video player was not found")
+        return jsonify(succes=False, message="No video player found")
 
     player.stop()
 
@@ -109,7 +110,7 @@ def video_ff():
     try:
         player
     except NameError:
-        return jsonify(succes=False, message="No Video found")
+        return jsonify(succes=False, message="No video player found")
 
     player.forward()
 
@@ -167,7 +168,8 @@ def video_info():
     except NameError:
         return jsonify(succes=False, message="No Video found")
 
-    info = player.print_player
+    print(player.print_player_dict())
+    info = player.print_player_dict()
 
     return jsonify(info)
 

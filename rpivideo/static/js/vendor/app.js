@@ -24,6 +24,7 @@ var VideoForm = React.createClass({
             data: dataSubmitted,
             success: function(data) {
                 this.setState({data: data});
+                this.props.video
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(xhr, status, err.toString());
@@ -46,7 +47,7 @@ var VideoForm = React.createClass({
               <option value="both">Both</option>
             </select>
           </div>
-          <button type="submit" className="btn btn-default">Submit</button>
+          <button updateStatusbar={this.props.updateStatusbar} type="submit" className="btn btn-default">Submit</button>
         </form>
         );
     }
@@ -55,9 +56,9 @@ var VideoForm = React.createClass({
 
 var VideoControls = React.createClass({
     getInitialState: function() {
-        return {progress: 0 + '%',
-                position: 0.0,
-                playing: false,
+        return {progress: this.props.progress + '%',
+                position: this.props.position,
+                playing: this.props.playing,
                 duration: this.setDuration()}
     },
     getProgress: function() {
@@ -68,6 +69,7 @@ var VideoControls = React.createClass({
                 this.setState({position: data.position, playing: data.playing})
                 if (data.playing === false) {
                     clearInterval(this.progressTimer)
+                    clearInterval(this.timer)
                 }
             }.bind(this)
         });
@@ -81,8 +83,12 @@ var VideoControls = React.createClass({
             }.bind(this)
         });
     },
-    componentDidMount: function() {
-
+    updateTimer: function() {
+        this.setState({position: this.state.position + 0.250});
+        if (this.state.playing === false) {
+            clearInterval(this.timer);
+            this.setState({position: 0.0})
+        }
     },
     playButton: function(e) {
         e.preventDefault();
@@ -93,16 +99,16 @@ var VideoControls = React.createClass({
                 console.log(data);
             }.bind(this)
         });
-        if (!this.progressTimer) {
-            this.progressTimer = setInterval(this.getProgress, 1500);
-        }
+        this.getProgress()
+        this.progressTimer = setInterval(this.getProgress, 15000);
+        this.timer = setInterval(this.updateTimer, 250)
     },
     stopButton: function(e) {
         e.preventDefault();
         $.ajax({
             url: '/video/stop',
             success: function(data) {
-                this.setState({playing: false});
+                this.setState({playing: false, position: 0.0});
                 console.log(data);
             }.bind(this)
         });
@@ -111,6 +117,7 @@ var VideoControls = React.createClass({
     },
     stepBackButton: function(e) {
         e.preventDefault();
+        this.getProgress();
         $.ajax({
             url: '/video/rw30',
             success: function(data) {
@@ -120,6 +127,7 @@ var VideoControls = React.createClass({
     },
     stepForwardButton: function(e) {
         e.preventDefault();
+        this.getProgress();
         $.ajax({
             url: '/video/ff30',
             success: function(data) {
@@ -129,6 +137,7 @@ var VideoControls = React.createClass({
     },
     rewindButton: function(e) {
         e.preventDefault();
+        this.getProgress();
         $.ajax({
             url: '/video/rw',
             success: function(data) {
@@ -138,6 +147,7 @@ var VideoControls = React.createClass({
     },
     forwardButton: function(e) {
         e.preventDefault();
+        this.getProgress();
         $.ajax({
             url: '/video/ff',
             success: function(data) {
@@ -187,12 +197,38 @@ var VideoControls = React.createClass({
     }
 })
 
+var VideoStatus = React.createClass({
+    render: function() {
+        return(
+            <div className="alert alert-info alert-dismissible" role="alert">
+              <button type="button" className="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              Status {this.props.video}
+            </div>
+        )
+    }
+});
+
 var VideoApp = React.createClass({
+    getInitialState: function() {
+        return {video: ""};
+    },
+
+    getVideoInfo: function() {
+        $.ajax({
+            url: '/video/info',
+            dataType: 'json',
+            success: function(data) {
+                this.setState({video: data})
+            }.bind(this)
+        });
+    },
+
     render: function() {
         return (
             <div className="row">
+                <VideoStatus video={this.state.video} />
                 <div className="col-md-4">
-                    <VideoForm />
+                    <VideoForm updateStatusbar={this.getVideoInfo} />
                 </div>
                 <div className="col-md-4">
                     <VideoControls />
@@ -203,6 +239,6 @@ var VideoApp = React.createClass({
 });
 
 ReactDOM.render(
-    <VideoApp />,
+    <VideoApp progress={0} position={0} duration={0} playing={false} video=""/>,
     document.getElementById('video-app')
 );

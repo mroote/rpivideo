@@ -39,8 +39,21 @@ class Player():
     def toggle_pause(self):
         self.player.toggle_pause()
 
-    def print_player(self):
-        print(self.player.__dict__)
+    def print_player_dict(self):
+        final = {
+            "vid": self.vid,
+            "url": self.url,
+            "title": self.title,
+            "vid_format": self.vid_format,
+            "format_id": self.format_id,
+            "upload_date": self.upload_date,
+            "height": self.height,
+            "width": self.width,
+            "vid_id": self.vid_id,
+            "duration": self.duration,
+        }
+
+        return final
 
     def stop(self):
         self.player.stop()

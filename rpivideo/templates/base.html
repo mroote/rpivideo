@@ -23,24 +23,12 @@
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">rpivideo</a>
+                <a class="navbar-brand" href="/">rpivideo</a>
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('.home') }}">Home</a></li>
-
-                    {% if not current_user.is_authenticated() %}
-                        <li><a href="{{ url_for('.login') }}">Login</a></li>
-                    {% else %}
-                        <li><a href="{{ url_for('.logout') }}">Logout</a></li>
-                        <li><a href=#>{{ session['username'] }}</a></li>
-                    {% endif %}
-
-                    <li><a href="{{ url_for('.restricted') }}">Login Restricted Page</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
@@ -62,15 +50,12 @@
         </div>
 
        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
-
         {% assets "common_js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
         {% endassets %}
-
         {% assets "app_js" %}
             <script type="text/babel" src="{{ ASSET_URL }}"></script>
         {% endassets %}
-
         {% block js %}
         {% endblock %}
     </body>
