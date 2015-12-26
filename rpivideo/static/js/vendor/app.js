@@ -23,7 +23,7 @@ var VideoForm = React.createClass({
             type: 'POST',
             data: dataSubmitted,
             success: function(data) {
-                this.props.fnClick();
+                this.props.infoClick();
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(xhr, status, err.toString());
@@ -200,10 +200,11 @@ var VideoStatus = React.createClass({
         if (this.props.show_info) {
             return(
                 <div className="alert alert-info alert-dismissible" role="alert">
-                <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                Now Playing: {this.props.title}
+                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <p>Now Playing: {this.props.title}</p>
+                    <p>Format: {this.props.vid_format}</p>
                 </div>
             )
         } else {
@@ -228,6 +229,7 @@ var VideoApp = React.createClass({
     },
 
     getVideoInfo: function() {
+        this.setState({show_info: false})
         $.ajax({
             url: '/video/info',
             dataType: 'json',
@@ -261,7 +263,7 @@ var VideoApp = React.createClass({
                             show_info={this.state.show_info}
                 />
                 <div className="col-md-4">
-                    <VideoForm fnClick={this.getVideoInfo} show-info={this.state.show_info}/>
+                    <VideoForm infoClick={this.getVideoInfo} show-info={this.state.show_info}/>
                 </div>
                 <div className="col-md-4">
                     <VideoControls />
