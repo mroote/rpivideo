@@ -1,3 +1,4 @@
 env
+__pycache__
 rpivideo/settings.py
 *.pyc
