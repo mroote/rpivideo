@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, flash, request, redirect, url_for, session, jsonify
 from flask.ext.login import login_user, logout_user, login_required
+import json
 
 from rpivideo.extensions import cache
 from rpivideo.forms import LoginForm, RegistrationForm
-from rpivideo.models import User, db
+from rpivideo.models import User, Video, db
 from rpivideo.video import Player
 
 main = Blueprint('main', __name__)
@@ -18,17 +19,17 @@ def home():
         try:
             url = request.form['url']
         except Exception as e:
-            return jsonify(Success=False, message="Please provide video URL: {}".format(e))
+            return jsonify(success=False, message="Please provide video URL: {}".format(e))
         try:
             output = request.form['output']
         except Exception as e:
-            return jsonify(Success=False, message="Please provide video output format: {}".format(e))
+            return jsonify(success=False, message="Please provide video output format: {}".format(e))
         try:
             player = Player(url=url, output=output)
-            #player.insert_vid_db()
+            player.insert_vid_db()
             return jsonify(success=True, message='Video added to play queue')
         except Exception as e:
-            return jsonify(error=e)
+            return jsonify(success=False, message="Error in playing video: {}".format(e))
 
     return render_template("video.html")
 
@@ -191,6 +192,28 @@ def video_position():
                    duration=duration,
                    playing=playing)
 
+@main.route("/video/list", methods=["GET"])
+def video_list():
+    final = []
+    
+    try:
+        videos = Video.query.all()
+    except Exception as e:
+        return jsonify(success=False, message="Error in playing video: {}".format(e))
+
+    for v in videos:
+        row = {'title': v.title,
+               'url': v.url,
+               'vid_format': v.vid_format,
+               'upload_date': v.upload_date,
+               'height': v.height,
+               'width': v.width,
+               'vid_id': v.vid_id,
+               'play_count': v.play_count}
+        final.append(row)
+
+    print(final)
+    return json.dumps(final)
 
 @main.route("/restricted")
 @login_required

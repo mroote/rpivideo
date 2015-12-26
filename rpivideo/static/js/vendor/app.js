@@ -23,8 +23,7 @@ var VideoForm = React.createClass({
             type: 'POST',
             data: dataSubmitted,
             success: function(data) {
-                this.setState({data: data});
-                this.props.video
+                this.props.fnClick();
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(xhr, status, err.toString());
@@ -47,12 +46,11 @@ var VideoForm = React.createClass({
               <option value="both">Both</option>
             </select>
           </div>
-          <button updateStatusbar={this.props.updateStatusbar} type="submit" className="btn btn-default">Submit</button>
+          <button type="submit" className="btn btn-default">Submit</button>
         </form>
         );
     }
 });
-
 
 var VideoControls = React.createClass({
     getInitialState: function() {
@@ -199,18 +197,34 @@ var VideoControls = React.createClass({
 
 var VideoStatus = React.createClass({
     render: function() {
-        return(
-            <div className="alert alert-info alert-dismissible" role="alert">
-              <button type="button" className="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              Status {this.props.video}
-            </div>
-        )
+        if (this.props.show_info) {
+            return(
+                <div className="alert alert-info alert-dismissible" role="alert">
+                <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                Now Playing: {this.props.title}
+                </div>
+            )
+        } else {
+            return null;
+        }
     }
 });
 
 var VideoApp = React.createClass({
     getInitialState: function() {
-        return {video: ""};
+        return {duration: "",
+                format_id: "",
+                height: "",
+                width: "",
+                title: "",
+                upload_date: "",
+                url: "",
+                vid: "",
+                vid_format: "",
+                vid_id: "",
+                show_info: false};
     },
 
     getVideoInfo: function() {
@@ -218,7 +232,17 @@ var VideoApp = React.createClass({
             url: '/video/info',
             dataType: 'json',
             success: function(data) {
-                this.setState({video: data})
+                this.setState({duration: data.duration,
+                               format_id: data.format_id,
+                               height: data.height,
+                               width: data.width,
+                               title: data.title,
+                               upload_date: data.upload_date,
+                               url: data.url,
+                               vid: data.vid,
+                               vid_format: data.vid_format,
+                               vid_id: data.vid_id,
+                               show_info: true})
             }.bind(this)
         });
     },
@@ -226,9 +250,18 @@ var VideoApp = React.createClass({
     render: function() {
         return (
             <div className="row">
-                <VideoStatus video={this.state.video} />
+                <VideoStatus duration={this.state.duration}
+                            format_id={this.state.format_id}
+                            height={this.state.height}
+                            width={this.state.width}
+                            title={this.state.title}
+                            upload_date={this.state.upload_date}
+                            url={this.state.url}
+                            vid_format={this.state.vid_format}
+                            show_info={this.state.show_info}
+                />
                 <div className="col-md-4">
-                    <VideoForm updateStatusbar={this.getVideoInfo} />
+                    <VideoForm fnClick={this.getVideoInfo} show-info={this.state.show_info}/>
                 </div>
                 <div className="col-md-4">
                     <VideoControls />

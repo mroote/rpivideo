@@ -76,16 +76,16 @@ class Player():
             VideoModel.play_count += 1
             db.session.commit()
         else:
-            video = VideoModel(url=self.url,
-                               title=self.title,
-                               vid_format=self.vid_format,
-                               format_id=self.format_id,
-                               upload_date=self.upload_date,
-                               height=self.height,
-                               width=self.width,
-                               vid_id=self.vid_id,
-                               play_count=1,
-                               duration=self.duration)
+            video = Video(url=self.url,
+                          title=self.title,
+                          vid_format=self.vid_format,
+                          format_id=self.format_id,
+                          upload_date=self.upload_date,
+                          height=self.height,
+                          width=self.width,
+                          vid_id=self.vid_id,
+                          play_count=1,
+                          duration=self.duration)
             db.session.add(video)
             db.session.commit()
 
@@ -95,8 +95,6 @@ def extract_info(url, options):
     with ydl:
         result = ydl.extract_info(url, download=False)
 
-    print(result)
-    print(dir(result))
     return result
 
 
