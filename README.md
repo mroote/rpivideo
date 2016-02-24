@@ -3,6 +3,8 @@
 A tool for streaming videos on the Raspberry Pi.  This lightweight video player
 can stream videos from youtube and other sources.
 
+![alt tag](http://imgur.com/ZEQQVn9)
+
 This application is build using Flask, pyomxplayer, and YouTube-DL to play many sources of video without the need of heavier software.  This player has been tested on the Raspberry Pi 1 and the Pi 2.
 
 Frontend of the application is built using React.js.
