@@ -25,6 +25,8 @@ video can be controlled via your browser
 
 To start the webserver on all interfaces:
 ``` bash
+make env
+make dep
 python manage.py runserver -h 0.0.0.0
 ```
 
