@@ -1,6 +1,12 @@
 var VideoForm = React.createClass({
     getInitialState: function() {
-        return {url: '', output: 'hdmi'};
+        return {url: '', 
+                video_title: this.props.video_title,
+                format: this.props.format, 
+                duration: this.props.duration,
+                height: this.props.height, 
+                width: this.props.width,
+                output: 'hdmi'};
     },
     handleUrlChange: function(e) {
         this.setState({url: e.target.value});
@@ -33,22 +39,47 @@ var VideoForm = React.createClass({
 
         this.setState({url: '', output: 'hdmi'})
     },
+    getVideoInfo: function() {
+        $.ajax({
+            url: '/video/info',
+            dataType: 'json',
+            success: function(data) {
+                this.setState({video_title: data.title,
+                               format: data.format,
+                               duration: data.duration,
+                               height: data.height,
+                               width: data.width})
+            }.bind(this)
+        });
+    },
+    submitButton: function() {
+        setInterval(this.getVideoInfo, 5000);
+    },
     render: function() {
         return (
-        <form method="POST" onSubmit={this.handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="url">Video URL:</label>
-            <input type="text" className="form-control" id="urlinput" placeholder="URL" name="url" value={this.state.url} onChange={this.handleUrlChange}/>
-          </div>
-          <div className="form-group">
-            <select className="form-control" ref="menu" name="output" value={this.state.output} onChange={this.handleOutputChange}>
-              <option value="hdmi">HDMI</option>
-              <option value="local">Local</option>
-              <option value="both">Both</option>
-            </select>
-          </div>
-          <button updateStatusbar={this.props.updateStatusbar} type="submit" className="btn btn-default">Submit</button>
-        </form>
+        <div>
+            <div className="alert alert-info alert-dismissible" role="alert">
+                <button type="button" className="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p>Now playing: {this.state.video_title}</p>
+                <p>Format: {this.state.format}</p>
+                <p>Duration: {this.state.duration}</p>
+
+            </div>
+            <form method="POST" onSubmit={this.handleSubmit}>
+            <div className="form-group">
+                <label htmlFor="url">Video URL:</label>
+                <input type="text" className="form-control" id="urlinput" placeholder="URL" name="url" value={this.state.url} onChange={this.handleUrlChange}/>
+            </div>
+            <div className="form-group">
+                <select className="form-control" ref="menu" name="output" value={this.state.output} onChange={this.handleOutputChange}>
+                <option value="hdmi">HDMI</option>
+                <option value="local">Local</option>
+                <option value="both">Both</option>
+                </select>
+            </div>
+            <button onClick={this.submitButton} type="submit" className="btn btn-default">Submit</button>
+            </form>
+        </div>
         );
     }
 });
@@ -95,13 +126,14 @@ var VideoControls = React.createClass({
         $.ajax({
             url: '/video/play',
             success: function(data) {
-                this.setState({playing: true});
+                this.setState({playing: true,
+                               duration: this.setDuration()});
                 console.log(data);
             }.bind(this)
         });
         this.getProgress()
-        this.progressTimer = setInterval(this.getProgress, 15000);
-        this.timer = setInterval(this.updateTimer, 250)
+        setInterval(this.getProgress, 15000);
+        setInterval(this.updateTimer, 1000)
     },
     stopButton: function(e) {
         e.preventDefault();
@@ -197,41 +229,42 @@ var VideoControls = React.createClass({
     }
 })
 
-var VideoStatus = React.createClass({
-    render: function() {
-        return(
-            <div className="alert alert-info alert-dismissible" role="alert">
-              <button type="button" className="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              Status {this.props.video}
-            </div>
-        )
-    }
-});
 
 var VideoApp = React.createClass({
     getInitialState: function() {
-        return {video: ""};
+        return {video_title: "",
+                format: "",
+                duration: "",
+                height: "",
+                width: "",
+                progress: "",
+                position: "",
+                playing: "",
+                duration: ""}
     },
 
-    getVideoInfo: function() {
-        $.ajax({
-            url: '/video/info',
-            dataType: 'json',
-            success: function(data) {
-                this.setState({video: data})
-            }.bind(this)
-        });
+    componentWillReceiveProps: function() {
+        this.getVideoInfo()
     },
 
     render: function() {
         return (
             <div className="row">
-                <VideoStatus video={this.state.video} />
                 <div className="col-md-4">
-                    <VideoForm updateStatusbar={this.getVideoInfo} />
+                    <VideoForm video_title={this.state.video_title} 
+                            format={this.state.format}
+                            duration={this.state.duration}
+                            height={this.state.height}
+                            width={this.state.width}
+                    />
                 </div>
                 <div className="col-md-4">
-                    <VideoControls />
+                    <VideoControls 
+                        progess={this.state.progress}
+                        position={this.state.position}
+                        playing={this.state.playing}
+                        duration={this.state.duration}
+                    />
                 </div>
             </div>
         );

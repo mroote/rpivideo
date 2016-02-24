@@ -168,8 +168,7 @@ def video_info():
     except NameError:
         return jsonify(succes=False, message="No Video found")
 
-    print(player.print_player_dict())
-    info = player.print_player_dict()
+    info = player.player_info()
 
     return jsonify(info)
 
@@ -186,10 +185,12 @@ def video_position():
     position = player.get_position()
     duration = player.get_duration()
     playing = player.check_running()
+    info = player.player_info()
 
     return jsonify(position=position,
                    duration=duration,
-                   playing=playing)
+                   playing=playing,
+                   info=info)
 
 
 @main.route("/restricted")

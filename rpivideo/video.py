@@ -39,7 +39,7 @@ class Player():
     def toggle_pause(self):
         self.player.toggle_pause()
 
-    def print_player_dict(self):
+    def player_info(self):
         final = {
             "vid": self.vid,
             "url": self.url,
