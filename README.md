@@ -23,6 +23,11 @@ Run "python manage.py runserver" to start the application in development mode.
 Access the interface through a web browser.  Video URL's can be submitted and the
 video can be controlled via your browser
 
+To start the webserver on all interfaces:
+``` bash
+python manage.py runserver -h 0.0.0.0
+```
+
 ## Contributing
 
 1. Fork it!

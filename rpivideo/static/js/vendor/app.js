@@ -29,8 +29,7 @@ var VideoForm = React.createClass({
             type: 'POST',
             data: dataSubmitted,
             success: function(data) {
-                this.setState({data: data});
-                this.props.video
+                this.props.infoClick();
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(xhr, status, err.toString());
@@ -83,7 +82,6 @@ var VideoForm = React.createClass({
         );
     }
 });
-
 
 var VideoControls = React.createClass({
     getInitialState: function() {
@@ -227,8 +225,7 @@ var VideoControls = React.createClass({
             </div>
         );
     }
-})
-
+});
 
 var VideoApp = React.createClass({
     getInitialState: function() {
