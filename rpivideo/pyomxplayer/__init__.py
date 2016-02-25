@@ -53,7 +53,7 @@ class OMXPlayer(object):
         self.position = 0.0
 
         # By default the process stops playing
-        self.paused = False
+        self.paused = True
         if not start_playback:
             self.toggle_pause()
         self.toggle_subtitles()

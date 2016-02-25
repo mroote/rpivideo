@@ -30,6 +30,9 @@ class Player():
     def get_duration(self):
         return self.player.duration
 
+    def check_paused(self):
+        return self.player.paused
+
     def check_running(self):
         return self.player.is_running()
 
@@ -38,6 +41,7 @@ class Player():
 
     def toggle_pause(self):
         self.player.toggle_pause()
+
 
     def player_info(self):
         final = {

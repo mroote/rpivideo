@@ -43,16 +43,18 @@ var VideoForm = React.createClass({
             url: '/video/info',
             dataType: 'json',
             success: function(data) {
+                var date = new Date(data.duration * 1000).toISOString().substr(11, 8);
                 this.setState({video_title: data.title,
                                format: data.format,
-                               duration: data.duration,
+                               duration: date.toString(),
                                height: data.height,
                                width: data.width})
             }.bind(this)
         });
     },
     submitButton: function() {
-        setInterval(this.getVideoInfo, 5000);
+        clearInterval(infoInterval)
+        var infoInterval = setInterval(this.getVideoInfo, 5000);
     },
     render: function() {
         return (
@@ -60,7 +62,6 @@ var VideoForm = React.createClass({
             <div className="alert alert-info alert-dismissible" role="alert">
                 <button type="button" className="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <p>Now playing: {this.state.video_title}</p>
-                <p>Format: {this.state.format}</p>
                 <p>Duration: {this.state.duration}</p>
 
             </div>
@@ -124,14 +125,20 @@ var VideoControls = React.createClass({
         $.ajax({
             url: '/video/play',
             success: function(data) {
-                this.setState({playing: true,
-                               duration: this.setDuration()});
-                console.log(data);
+                if (data.playing === true) {
+                    this.setState({playing: true,
+                                    duration: this.setDuration()});
+                    console.log(data);
+                    this.getProgress()
+                    var progessTimer = setInterval(this.getProgress, 15000);
+                    var updateTimer = setInterval(this.updateTimer, 1000)
+                } 
+                if (data.playing == false) {
+                    clearInterval(progressTimer)
+                    clearInterval(updateTimer)
+                }
             }.bind(this)
         });
-        this.getProgress()
-        setInterval(this.getProgress, 15000);
-        setInterval(this.updateTimer, 1000)
     },
     stopButton: function(e) {
         e.preventDefault();
@@ -142,7 +149,8 @@ var VideoControls = React.createClass({
                 console.log(data);
             }.bind(this)
         });
-        clearInterval(this.progressTimer);
+        clearInterval(this.progressTimer)
+        clearInterval(this.updateTimer)
         this.progressTimer = false;
     },
     stepBackButton: function(e) {
@@ -187,6 +195,14 @@ var VideoControls = React.createClass({
     },
     render: function() {
         var percentComplete = this.state.position / this.state.duration * 100
+        var percentComplete = percentComplete.toString().substr(0, 4)
+        console.log(this.state.position)
+        var positionDate = new Date(this.state.position * 1000).toISOString().substr(11, 8);
+        if (this.state.duration) {
+            var durationDate = new Date(this.state.duration * 1000).toISOString().substr(11, 8);
+        }
+        console.log(this.state.duration)
+        //var durationDate = new Date(this.state.duration * 1000).toISOString().substr(11, 8);
 
         return (
             <div>
@@ -213,6 +229,7 @@ var VideoControls = React.createClass({
                         </button>
                     </div>
                 </div>
+                <p>Position: {positionDate}, Duration: {durationDate}, Percent watched: {percentComplete}</p>
                 <div className="progress">
                   <div className="progress-bar"
                        role="progressbar"
@@ -238,10 +255,6 @@ var VideoApp = React.createClass({
                 position: "",
                 playing: "",
                 duration: ""}
-    },
-
-    componentWillReceiveProps: function() {
-        this.getVideoInfo()
     },
 
     render: function() {

@@ -84,10 +84,11 @@ def video_playpause():
     try:
         player
     except NameError:
-        return jsonify(succes=False, message="No video player found")
+        return jsonify(success=False, message="No video player found")
 
     player.toggle_pause()
-    return jsonify(success=True)
+    playing = player.check_paused()
+    return jsonify(success=True, playing=playing)
 
 
 @main.route("/video/stop", methods=["GET", "POST"])
@@ -97,7 +98,7 @@ def video_stop():
     try:
         player
     except NameError:
-        return jsonify(succes=False, message="No video player found")
+        return jsonify(success=False, message="No video player found")
 
     player.stop()
 
@@ -125,7 +126,7 @@ def video_rw():
     try:
         player
     except NameError:
-        return jsonify(succes=False, message="No Video found")
+        return jsonify(success=False, message="No Video found")
 
     player.backward()
 
@@ -185,7 +186,7 @@ def video_position():
 
     position = player.get_position()
     duration = player.get_duration()
-    playing = player.check_running()
+    playing = player.check_paused()
     info = player.player_info()
 
     return jsonify(position=position,
