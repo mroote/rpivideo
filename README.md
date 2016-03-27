@@ -1,7 +1,7 @@
 # RPI Video
 
 A tool for streaming videos on the Raspberry Pi.  This lightweight video player
-can stream videos from youtube and other sources.
+can stream videos from youtube and other sources.  Video output can be configured to use the HDMI or analog video connectors.
 
 ![alt tag](http://imgur.com/ZEQQVn9.png)
 
